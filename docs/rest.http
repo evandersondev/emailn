@@ -1,0 +1,9 @@
+###
+POST http://localhost:3000/campaigns
+Content-Type: application/json
+
+{
+    "name": "Mouse XPTO",
+    "content": "Algum conteudo qualquer!",
+    "emails": ["evandersondev@mail.com", "asafedias@mail.com"]
+}
