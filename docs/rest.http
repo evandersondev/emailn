@@ -1,9 +1,14 @@
 ###
+
 POST http://localhost:3000/campaigns
 Content-Type: application/json
 
 {
-    "name": "Mouse XPTO",
+    "name": "Teclado ABC",
     "content": "Algum conteudo qualquer!",
     "emails": ["evandersondev@mail.com", "asafedias@mail.com"]
 }
+
+###
+
+GET http://localhost:3000/campaigns

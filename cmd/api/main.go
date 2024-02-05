@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	"github.com/evandersondev/emailn/internal/domain/campaign"
-	"github.com/evandersondev/emailn/internal/dtos"
+	"github.com/evandersondev/emailn/internal/endpoint"
+	"github.com/evandersondev/emailn/internal/infra/database"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/render"
 )
 
 func main() {
@@ -18,27 +18,15 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	service := campaign.Service{}
+	campaignServices := campaign.Service{
+		Repository: &database.CampaignRepository{},
+	}
+	handler := endpoint.Handler{
+		CampaignService: campaignServices,
+	}
 
-	r.Post("/campaigns", func(w http.ResponseWriter, r *http.Request) {
-		var campaign dtos.NewCampaignDto
-		err := render.DecodeJSON(r.Body, &campaign)
-
-		if err != nil {
-			println(err.Error())
-		}
-
-		id, err := service.Create(campaign)
-
-		if err != nil {
-			render.Status(r, 400)
-			render.JSON(w, r, map[string]string{"error": err.Error()})
-			return
-		}
-
-		render.Status(r, 201)
-		render.JSON(w, r, map[string]string{"id": id})
-	})
+	r.Get("/campaigns", endpoint.HandlerError(handler.CampaignGetAll))
+	r.Post("/campaigns", endpoint.HandlerError(handler.CampaignPost))
 
 	http.ListenAndServe(":3000", r)
 }
